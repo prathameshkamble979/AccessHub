@@ -82,15 +82,15 @@ export function LoginPage({
 
           <form onSubmit={handleSubmit}>
             <div style={{ display: "flex", gap: "1rem", marginBottom: "1.5rem" }}>
-              <button 
-                type="button" 
+              <button
+                type="button"
                 onClick={() => { setLoginMethod("email"); setForm(f => ({...f, identifier: ""})); setErrors(e => ({...e, identifier: ""})); }}
                 style={{ flex: 1, padding: "0.5rem", borderRadius: "8px", border: loginMethod === "email" ? "2px solid var(--primary-color)" : "1px solid var(--border-color)", background: "transparent", cursor: "pointer", color: "var(--text-primary)", fontWeight: loginMethod === "email" ? "600" : "400" }}
               >
                 Use Email
               </button>
-              <button 
-                type="button" 
+              <button
+                type="button"
                 onClick={() => { setLoginMethod("phone"); setForm(f => ({...f, identifier: ""})); setErrors(e => ({...e, identifier: ""})); }}
                 style={{ flex: 1, padding: "0.5rem", borderRadius: "8px", border: loginMethod === "phone" ? "2px solid var(--primary-color)" : "1px solid var(--border-color)", background: "transparent", cursor: "pointer", color: "var(--text-primary)", fontWeight: loginMethod === "phone" ? "600" : "400" }}
               >
