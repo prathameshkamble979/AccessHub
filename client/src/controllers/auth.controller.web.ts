@@ -1,3 +1,35 @@
+import { auth } from "../config/firebase";
+import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
+import { setActiveSession, fetchApi } from "./api.client";
+
+
+export const loginWithGoogle = async () => {
+  try {
+    const provider = new GoogleAuthProvider();
+    const result = await signInWithPopup(auth, provider);
+
+    const user = result.user;
+    const token = await user.getIdToken();
+
+    console.log("USER:", user);
+    console.log("Firebase ID Token:", token);
+
+    // 🔥 MAIN FIX
+    setActiveSession(
+      {
+        uid: user.uid,
+        email: user.email || "",
+        role: "user",
+      },
+      token
+    );
+
+    return user;
+  } catch (error) {
+    console.error("Google Login Error:", error);
+    throw error;
+  }
+};
 export interface LoginFormData {
   identifier: string;
   password: string;
@@ -71,7 +103,6 @@ export function validateRegisterForm(
   return errors;
 }
 
-import { setActiveSession, fetchApi } from "./api.client";
 
 export async function handleLogin(data: LoginFormData): Promise<AuthResult> {
   const errors = validateLoginForm(data);

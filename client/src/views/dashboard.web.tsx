@@ -1,7 +1,9 @@
+import { auth } from "../config/firebase";
 import { useState, useEffect, useRef } from "react";
-import { getDashboardDataApi, updateProfilePictureApi, updateProfileApi, updatePasswordApi, setActiveSession } from "../controllers/api.client";
-import type { User } from "../controllers/api.client";
+// import { getDashboardDataApi, updateProfilePictureApi, updateProfileApi, updatePasswordApi, setActiveSession } from "../controllers/api.client";
+// import type { User } from "../controllers/api.client";
 import "../styles/auth.css";
+import { signOut } from "firebase/auth";
 
 interface DashboardProps {
   user: User;
@@ -9,9 +11,17 @@ interface DashboardProps {
 }
 
 export function DashboardPage({ user: initialUser, onLogout }: DashboardProps) {
-  const [user, setUser] = useState<User>(initialUser);
+ // const [user, setUser] = useState<User>(initialUser);
+
+const firebaseUser = auth.currentUser;
+
+const user = {
+  name: firebaseUser?.displayName || initialUser?.name || "User",
+  email: firebaseUser?.email || initialUser?.email || "",
+  profilePicture: firebaseUser?.photoURL || initialUser?.profilePicture || ""
+};
   const [dashboardData, setDashboardData] = useState<any>(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [activeTab, setActiveTab] = useState("dashboard");
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -20,26 +30,36 @@ export function DashboardPage({ user: initialUser, onLogout }: DashboardProps) {
   const [profileMessage, setProfileMessage] = useState({ type: '', text: '' });
   const [passwordMessage, setPasswordMessage] = useState({ type: '', text: '' });
 
-  useEffect(() => {
-    setProfileForm({ name: user.name || '', phone: user.phone || '' });
-  }, [user]);
+  // useEffect(() => {
+  //   setProfileForm({ name: user.name || '', phone: user.phone || '' });
+  // }, [user]);
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const data = await getDashboardDataApi();
-        setDashboardData(data);
-        setUser(data.user);
-        setActiveSession(data.user, localStorage.getItem('auth_token') || undefined);
-      } catch (error) {
-        console.error("Failed to fetch dashboard data:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
+    setProfileForm({ name: user.name || '', phone: '' });
+  }, [user.name]);
 
-    fetchData();
-  }, []);
+  const handleLogout = async () => {
+    await signOut(auth);
+    localStorage.removeItem("login_time");
+    onLogout();
+  };
+
+  // useEffect(() => {
+  //   const fetchData = async () => {
+  //     try {
+  //       const data = await getDashboardDataApi();
+  //       setDashboardData(data);
+  //       setUser(data.user);
+  //       setActiveSession(data.user, localStorage.getItem('auth_token') || undefined);
+  //     } catch (error) {
+  //       console.error("Failed to fetch dashboard data:", error);
+  //     } finally {
+  //       setLoading(false);
+  //     }
+  //   };
+
+  //   fetchData();
+  // }, []);
 
   const handleProfilePictureClick = () => {
     fileInputRef.current?.click();
@@ -108,12 +128,12 @@ export function DashboardPage({ user: initialUser, onLogout }: DashboardProps) {
 
   return (
     <div
-      style={{ 
-        width: "100%", 
-        minHeight: "100vh", 
-        display: "flex", 
-        justifyContent: "center", 
-        padding: "2rem" 
+      style={{
+        width: "100%",
+        minHeight: "100vh",
+        display: "flex",
+        justifyContent: "center",
+        padding: "2rem"
       }}
     >
       <div
@@ -142,7 +162,7 @@ export function DashboardPage({ user: initialUser, onLogout }: DashboardProps) {
             Freelance.dev
           </div>
           <div style={{ marginBottom: "2rem", display: "flex", flexDirection: "column", alignItems: "flex-start" }}>
-            <div 
+            <div
               style={{
                 width: "64px",
                 height: "64px",
@@ -165,11 +185,11 @@ export function DashboardPage({ user: initialUser, onLogout }: DashboardProps) {
               ) : (
                 <span style={{ color: "var(--text-sec)", fontSize: "24px" }}>{user.name.charAt(0)}</span>
               )}
-              <input 
-                type="file" 
-                accept="image/*" 
-                ref={fileInputRef} 
-                style={{ display: "none" }} 
+              <input
+                type="file"
+                accept="image/*"
+                ref={fileInputRef}
+                style={{ display: "none" }}
                 onChange={handleFileChange}
               />
             </div>
@@ -569,10 +589,10 @@ export function DashboardPage({ user: initialUser, onLogout }: DashboardProps) {
                     <div key={idx} style={{ padding: "1.5rem", background: "var(--bg-color)", borderRadius: "8px", border: "1px solid var(--border)" }}>
                       <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "0.5rem" }}>
                         <h4 style={{ margin: 0, fontSize: "1.1rem" }}>{project.title}</h4>
-                        <span style={{ 
-                          padding: "0.25rem 0.75rem", 
-                          borderRadius: "99px", 
-                          fontSize: "0.75rem", 
+                        <span style={{
+                          padding: "0.25rem 0.75rem",
+                          borderRadius: "99px",
+                          fontSize: "0.75rem",
                           fontWeight: "bold",
                           background: project.status === 'Completed' ? "rgba(16, 185, 129, 0.15)" : "rgba(212, 169, 106, 0.15)",
                           color: project.status === 'Completed' ? "#10b981" : "#d4a96a"
@@ -641,10 +661,10 @@ export function DashboardPage({ user: initialUser, onLogout }: DashboardProps) {
               {messages && messages.length > 0 ? (
                 <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
                   {messages.map((msg: any, idx: number) => (
-                    <div key={idx} style={{ 
-                      padding: "1.5rem", 
-                      background: msg.read ? "var(--bg-color)" : "var(--surface)", 
-                      borderRadius: "8px", 
+                    <div key={idx} style={{
+                      padding: "1.5rem",
+                      background: msg.read ? "var(--bg-color)" : "var(--surface)",
+                      borderRadius: "8px",
                       border: msg.read ? "1px solid var(--border)" : "1px solid var(--accent)",
                       borderLeft: msg.read ? undefined : "4px solid var(--accent)"
                     }}>
@@ -667,10 +687,10 @@ export function DashboardPage({ user: initialUser, onLogout }: DashboardProps) {
               <section style={{ background: "var(--surface)", padding: "2rem", borderRadius: "12px", border: "1px solid var(--border)" }}>
                 <h3 style={{ margin: "0 0 1.5rem" }}>Update Profile</h3>
                 {profileMessage.text && (
-                  <div style={{ 
-                    padding: "1rem", 
-                    marginBottom: "1.5rem", 
-                    borderRadius: "8px", 
+                  <div style={{
+                    padding: "1rem",
+                    marginBottom: "1.5rem",
+                    borderRadius: "8px",
                     background: profileMessage.type === 'success' ? 'rgba(16, 185, 129, 0.1)' : 'rgba(239, 68, 68, 0.1)',
                     color: profileMessage.type === 'success' ? '#10b981' : '#ef4444',
                     border: `1px solid ${profileMessage.type === 'success' ? '#10b981' : '#ef4444'}`
@@ -681,20 +701,20 @@ export function DashboardPage({ user: initialUser, onLogout }: DashboardProps) {
                 <form onSubmit={handleProfileSubmit} style={{ display: "flex", flexDirection: "column", gap: "1rem", maxWidth: "400px" }}>
                   <div className="form-group">
                     <label>Full Name</label>
-                    <input 
-                      type="text" 
-                      value={profileForm.name} 
+                    <input
+                      type="text"
+                      value={profileForm.name}
                       onChange={(e) => setProfileForm({...profileForm, name: e.target.value})}
-                      required 
+                      required
                     />
                   </div>
                   <div className="form-group">
                     <label>Phone Number</label>
-                    <input 
-                      type="tel" 
-                      value={profileForm.phone} 
+                    <input
+                      type="tel"
+                      value={profileForm.phone}
                       onChange={(e) => setProfileForm({...profileForm, phone: e.target.value})}
-                      required 
+                      required
                     />
                   </div>
                   <button type="submit" className="submit-btn" style={{ marginTop: "1rem" }}>Save Profile</button>
@@ -704,10 +724,10 @@ export function DashboardPage({ user: initialUser, onLogout }: DashboardProps) {
               <section style={{ background: "var(--surface)", padding: "2rem", borderRadius: "12px", border: "1px solid var(--border)" }}>
                 <h3 style={{ margin: "0 0 1.5rem" }}>Change Password</h3>
                 {passwordMessage.text && (
-                  <div style={{ 
-                    padding: "1rem", 
-                    marginBottom: "1.5rem", 
-                    borderRadius: "8px", 
+                  <div style={{
+                    padding: "1rem",
+                    marginBottom: "1.5rem",
+                    borderRadius: "8px",
                     background: passwordMessage.type === 'success' ? 'rgba(16, 185, 129, 0.1)' : 'rgba(239, 68, 68, 0.1)',
                     color: passwordMessage.type === 'success' ? '#10b981' : '#ef4444',
                     border: `1px solid ${passwordMessage.type === 'success' ? '#10b981' : '#ef4444'}`
@@ -718,30 +738,30 @@ export function DashboardPage({ user: initialUser, onLogout }: DashboardProps) {
                 <form onSubmit={handlePasswordSubmit} style={{ display: "flex", flexDirection: "column", gap: "1rem", maxWidth: "400px" }}>
                   <div className="form-group">
                     <label>Current Password</label>
-                    <input 
-                      type="password" 
-                      value={passwordForm.currentPassword} 
+                    <input
+                      type="password"
+                      value={passwordForm.currentPassword}
                       onChange={(e) => setPasswordForm({...passwordForm, currentPassword: e.target.value})}
-                      required 
+                      required
                     />
                   </div>
                   <div className="form-group">
                     <label>New Password</label>
-                    <input 
-                      type="password" 
-                      value={passwordForm.newPassword} 
+                    <input
+                      type="password"
+                      value={passwordForm.newPassword}
                       onChange={(e) => setPasswordForm({...passwordForm, newPassword: e.target.value})}
-                      required 
+                      required
                       minLength={6}
                     />
                   </div>
                   <div className="form-group">
                     <label>Confirm New Password</label>
-                    <input 
-                      type="password" 
-                      value={passwordForm.confirmPassword} 
+                    <input
+                      type="password"
+                      value={passwordForm.confirmPassword}
                       onChange={(e) => setPasswordForm({...passwordForm, confirmPassword: e.target.value})}
-                      required 
+                      required
                       minLength={6}
                     />
                   </div>
