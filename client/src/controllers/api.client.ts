@@ -1,9 +1,12 @@
+import { triggerUnauthorized } from './authEvents';
+
 export const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
 
 export interface User {
   name: string;
   email: string;
   phone: string;
+  role?: string;
   profilePicture?: string;
 }
 
@@ -49,6 +52,13 @@ export async function fetchApi(endpoint: string, options: RequestInit = {}) {
   });
 
   const data = await response.json();
+  
+  if (response.status === 401) {
+    setActiveSession(null);
+    triggerUnauthorized();
+    throw new Error(data.message || 'Session expired. Please log in again.');
+  }
+
   if (!response.ok) {
     throw new Error(data.message || 'Something went wrong');
   }
