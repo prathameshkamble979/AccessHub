@@ -1,73 +1,126 @@
-# React + TypeScript + Vite
+# 🚀 AccessHub — Collaborative Full Stack Platform
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A scalable and modern **Full Stack Web Application** built collaboratively by a team of developers using **React, TypeScript, Node.js, Express, and MongoDB**.
 
-Currently, two official plugins are available:
+The platform provides **secure authentication**, including **Google Sign-In and Phone OTP login**, along with a structured dashboard system.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+Designed with **industry-level architecture**, clean code practices, and team-based Git workflow.
 
-## React Compiler
+---
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## 🌐 Live Project
+(Add your deployed link here)
 
-## Expanding the ESLint configuration
+---
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+## 🧰 Tech Badges
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+![React](https://img.shields.io/badge/React-18-61dafb?style=flat-square&logo=react)
+![TypeScript](https://img.shields.io/badge/TypeScript-5-3178c6?style=flat-square&logo=typescript)
+![Node.js](https://img.shields.io/badge/Node.js-18-339933?style=flat-square&logo=node.js)
+![Express](https://img.shields.io/badge/Express.js-4-black?style=flat-square)
+![MongoDB](https://img.shields.io/badge/MongoDB-Database-47a248?style=flat-square&logo=mongodb)
+![Firebase](https://img.shields.io/badge/Firebase-Auth-ffca28?style=flat-square&logo=firebase)
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+---
+
+## 🚀 Features
+
+### 🔐 Authentication System
+- Google Sign-In (Firebase)
+- Phone Number OTP Login
+- Persistent Login (session restore)
+- Secure Logout
+
+### 🧠 Frontend
+- ⚛️ React 18 with TypeScript
+- 📦 Modular architecture
+- 🛣️ React Router v6 protected routes
+- 🎨 Tailwind CSS styling
+
+### ⚙️ Backend
+- 🌐 Node.js + Express API
+- 🔐 JWT-based authentication
+- 📦 RESTful API structure
+- 🧩 Middleware handling
+
+### 🗄️ Database
+- 🍃 MongoDB
+- 👤 User storage & authentication data
+- 📊 Scalable schema design
+
+---
+
+## 🛠 Tech Stack
+
+| Category | Technology |
+|---------|-----------|
+| Frontend | React 18 + TypeScript |
+| Styling | Tailwind CSS |
+| Routing | React Router |
+| Backend | Node.js + Express |
+| Database | MongoDB |
+| Auth | Firebase + JWT |
+| API Client | Axios |
+
+
+---
+
+## 🔐 Authentication Flow
+
+### Google Login Flow
+
+```
+User clicks → Google Sign-In
+        ↓
+Firebase Authentication
+        ↓
+ID Token received
+        ↓
+Backend verifies token
+        ↓
+User stored in DB
+        ↓
+Dashboard access
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+### 📱 Phone OTP Login
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
 ```
+User enters phone number
+        ↓
+Firebase sends OTP
+        ↓
+User verifies OTP
+        ↓
+User authenticated
+        ↓
+Dashboard redirect
+```
+
+---
+
+
+
+## 🚀 Deployment
+
+### Frontend
+- Vercel / Netlify
+
+### Backend
+- Render / Railway / VPS
+
+---
+
+## 📌 Future Enhancements
+
+- 🛒 Role-based dashboard
+- 🔔 Notifications system
+- 📊 Analytics panel
+- 🌐 Multi-language support
+
+---
+
+
+
