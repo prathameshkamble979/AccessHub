@@ -1,9 +1,12 @@
-import { auth } from "../config/firebase";
-import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
+// import { auth } from "../config/firebase";
+// import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 import { setActiveSession, fetchApi } from "./api.client";
 
 
 export const loginWithGoogle = async () => {
+  alert("Google login is temporarily disabled.");
+  throw new Error("Google login is disabled");
+  /*
   try {
     const provider = new GoogleAuthProvider();
     const result = await signInWithPopup(auth, provider);
@@ -29,6 +32,7 @@ export const loginWithGoogle = async () => {
     console.error("Google Login Error:", error);
     throw error;
   }
+  */
 };
 export interface LoginFormData {
   identifier: string;

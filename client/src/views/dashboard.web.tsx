@@ -1,9 +1,9 @@
-import { auth } from "../config/firebase";
+// import { auth } from "../config/firebase";
 import { useState, useEffect, useRef } from "react";
-// import { getDashboardDataApi, updateProfilePictureApi, updateProfileApi, updatePasswordApi, setActiveSession } from "../controllers/api.client";
-// import type { User } from "../controllers/api.client";
+import { getDashboardDataApi, updateProfilePictureApi, updateProfileApi, updatePasswordApi, setActiveSession } from "../controllers/api.client";
+import type { User } from "../controllers/api.client";
 import "../styles/auth.css";
-import { signOut } from "firebase/auth";
+// import { signOut } from "firebase/auth";
 
 interface DashboardProps {
   user: User;
@@ -11,15 +11,17 @@ interface DashboardProps {
 }
 
 export function DashboardPage({ user: initialUser, onLogout }: DashboardProps) {
- // const [user, setUser] = useState<User>(initialUser);
+  const [user, setUser] = useState<User>(initialUser);
 
-const firebaseUser = auth.currentUser;
-
-const user = {
-  name: firebaseUser?.displayName || initialUser?.name || "User",
-  email: firebaseUser?.email || initialUser?.email || "",
-  profilePicture: firebaseUser?.photoURL || initialUser?.profilePicture || ""
-};
+  /*
+  const firebaseUser = auth.currentUser;
+  
+  const user = {
+    name: firebaseUser?.displayName || initialUser?.name || "User",
+    email: firebaseUser?.email || initialUser?.email || "",
+    profilePicture: firebaseUser?.photoURL || initialUser?.profilePicture || ""
+  };
+  */
   const [dashboardData, setDashboardData] = useState<any>(null);
   const [loading, setLoading] = useState(false);
   const [activeTab, setActiveTab] = useState("dashboard");
@@ -30,36 +32,38 @@ const user = {
   const [profileMessage, setProfileMessage] = useState({ type: '', text: '' });
   const [passwordMessage, setPasswordMessage] = useState({ type: '', text: '' });
 
-  // useEffect(() => {
-  //   setProfileForm({ name: user.name || '', phone: user.phone || '' });
-  // }, [user]);
+  useEffect(() => {
+    setProfileForm({ name: user.name || '', phone: user.phone || '' });
+  }, [user]);
 
+  /*
   useEffect(() => {
     setProfileForm({ name: user.name || '', phone: '' });
   }, [user.name]);
+  */
 
   const handleLogout = async () => {
-    await signOut(auth);
+    // await signOut(auth);
     localStorage.removeItem("login_time");
     onLogout();
   };
 
-  // useEffect(() => {
-  //   const fetchData = async () => {
-  //     try {
-  //       const data = await getDashboardDataApi();
-  //       setDashboardData(data);
-  //       setUser(data.user);
-  //       setActiveSession(data.user, localStorage.getItem('auth_token') || undefined);
-  //     } catch (error) {
-  //       console.error("Failed to fetch dashboard data:", error);
-  //     } finally {
-  //       setLoading(false);
-  //     }
-  //   };
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const data = await getDashboardDataApi();
+        setDashboardData(data);
+        setUser(data.user);
+        setActiveSession(data.user, localStorage.getItem('auth_token') || undefined);
+      } catch (error) {
+        console.error("Failed to fetch dashboard data:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  //   fetchData();
-  // }, []);
+    fetchData();
+  }, []);
 
   const handleProfilePictureClick = () => {
     fileInputRef.current?.click();
@@ -183,7 +187,7 @@ const user = {
               {user.profilePicture ? (
                 <img src={user.profilePicture} alt="Profile" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
               ) : (
-                <span style={{ color: "var(--text-sec)", fontSize: "24px" }}>{user.name.charAt(0)}</span>
+                <span style={{ color: "var(--text-sec)", fontSize: "24px" }}>{(user?.name || "User").charAt(0).toUpperCase()}</span>
               )}
               <input
                 type="file"
@@ -704,7 +708,7 @@ const user = {
                     <input
                       type="text"
                       value={profileForm.name}
-                      onChange={(e) => setProfileForm({...profileForm, name: e.target.value})}
+                      onChange={(e) => setProfileForm({ ...profileForm, name: e.target.value })}
                       required
                     />
                   </div>
@@ -713,7 +717,7 @@ const user = {
                     <input
                       type="tel"
                       value={profileForm.phone}
-                      onChange={(e) => setProfileForm({...profileForm, phone: e.target.value})}
+                      onChange={(e) => setProfileForm({ ...profileForm, phone: e.target.value })}
                       required
                     />
                   </div>
@@ -741,7 +745,7 @@ const user = {
                     <input
                       type="password"
                       value={passwordForm.currentPassword}
-                      onChange={(e) => setPasswordForm({...passwordForm, currentPassword: e.target.value})}
+                      onChange={(e) => setPasswordForm({ ...passwordForm, currentPassword: e.target.value })}
                       required
                     />
                   </div>
@@ -750,7 +754,7 @@ const user = {
                     <input
                       type="password"
                       value={passwordForm.newPassword}
-                      onChange={(e) => setPasswordForm({...passwordForm, newPassword: e.target.value})}
+                      onChange={(e) => setPasswordForm({ ...passwordForm, newPassword: e.target.value })}
                       required
                       minLength={6}
                     />
@@ -760,7 +764,7 @@ const user = {
                     <input
                       type="password"
                       value={passwordForm.confirmPassword}
-                      onChange={(e) => setPasswordForm({...passwordForm, confirmPassword: e.target.value})}
+                      onChange={(e) => setPasswordForm({ ...passwordForm, confirmPassword: e.target.value })}
                       required
                       minLength={6}
                     />
@@ -772,6 +776,6 @@ const user = {
           )}
         </main>
       </div>
-    </div>
+    </div >
   );
 }
