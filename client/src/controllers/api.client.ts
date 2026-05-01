@@ -1,38 +1,38 @@
-export const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+import { triggerUnauthorized } from './authEvents';
+
+const STORAGE_KEY = "active_session";
 
 export interface User {
-  name: string;
-  email: string;
-  phone: string;
-  profilePicture?: string;
-}
-
-export function getActiveUser(): User | null {
-  const activeStr = localStorage.getItem("active_session");
-  if (!activeStr) return null;
-  try {
-    return JSON.parse(activeStr);
-  } catch {
-    return null;
-  }
+  uid?: string;
+  name?: string;
+  email?: string;
+  role?: string;
 }
 
 export function setActiveSession(user: User | null, token?: string) {
   if (user) {
-    localStorage.setItem("active_session", JSON.stringify(user));
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(user));
     if (token) localStorage.setItem("auth_token", token);
   } else {
-    localStorage.removeItem("active_session");
+    localStorage.removeItem(STORAGE_KEY);
     localStorage.removeItem("auth_token");
   }
+}
+
+export function getActiveUser(): User | null {
+  const data = localStorage.getItem(STORAGE_KEY);
+  return data ? JSON.parse(data) : null;
 }
 
 export function getToken(): string | null {
   return localStorage.getItem("auth_token");
 }
 
+export const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+
 export async function fetchApi(endpoint: string, options: RequestInit = {}) {
   const token = getToken();
+
   const headers: Record<string, string> = {
     'Content-Type': 'application/json',
     ...(options.headers as Record<string, string> || {}),
@@ -49,6 +49,13 @@ export async function fetchApi(endpoint: string, options: RequestInit = {}) {
   });
 
   const data = await response.json();
+
+  if (response.status === 401) {
+    setActiveSession(null);
+    triggerUnauthorized();
+    throw new Error(data.message || 'Session expired. Please log in again.');
+  }
+
   if (!response.ok) {
     throw new Error(data.message || 'Something went wrong');
   }
