@@ -1,16 +1,26 @@
 import { useEffect } from "react";
-import { Routes, Route, useNavigate, useLocation, Navigate } from "react-router-dom";
+import {
+  Routes,
+  Route,
+  useNavigate,
+  useLocation,
+  Navigate,
+} from "react-router-dom";
 import { LoginPage } from "../views/login.web";
 import { RegisterPage } from "../views/register.web";
 import { ForgotPasswordPage } from "../views/forget-password.web";
 import { VerifyOTPPage } from "../views/verify-otp.web";
 import { ResetPasswordPage } from "../views/reset-password.web";
 import { DashboardPage } from "../views/dashboard.web";
-import { getActiveUser, setActiveSession, getDashboardDataApi } from "../controllers/api.client";
+import {
+  getActiveUser,
+  setActiveSession,
+  getDashboardDataApi,
+} from "../controllers/api.client";
 import { PrivateRoute } from "./PrivateRoute";
 import { RoleRoute } from "./RoleRoute";
-import { auth } from "../config/firebase"
-import { signOut } from "firebase/auth";
+// import { auth } from "../config/firebase";
+// import { signOut } from "firebase/auth";
 
 const ADMIN_ROUTES = ["/admin"];
 
@@ -18,13 +28,12 @@ function AdminPage() {
   return <div>Admin Dashboard</div>;
 }
 
-
-
 function LoginWrapper() {
   const navigate = useNavigate();
   const location = useLocation();
 
   // Firebase redirect
+  /*
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((user) => {
       if (user && location.pathname === "/login") {
@@ -34,6 +43,7 @@ function LoginWrapper() {
 
     return () => unsubscribe();
   }, [location.pathname]);
+  */
 
   // 24hr logout check
   useEffect(() => {
@@ -45,7 +55,7 @@ function LoginWrapper() {
         const diff = now - Number(loginTime);
 
         if (diff > 24 * 60 * 60 * 1000) {
-          await auth.signOut();
+          // await auth.signOut();
           localStorage.removeItem("login_time");
           navigate("/login");
         }
@@ -55,16 +65,15 @@ function LoginWrapper() {
     checkSession();
   }, [navigate]);
 
-
-
   return (
     <LoginPage
       onSuccess={() => {
         const from = location.state?.from || { pathname: "/dashboard" };
         const user = getActiveUser();
 
-        const isAdminRoute = ADMIN_ROUTES.some(route =>
-          from?.pathname === route || from?.pathname?.startsWith(route + "/")
+        const isAdminRoute = ADMIN_ROUTES.some(
+          (route) =>
+            from?.pathname === route || from?.pathname?.startsWith(route + "/"),
         );
 
         if (isAdminRoute && user?.role !== "admin") {
@@ -93,7 +102,9 @@ function ForgotPasswordWrapper() {
   const navigate = useNavigate();
   return (
     <ForgotPasswordPage
-      onOTPSent={(sentEmail) => navigate("/verify-otp", { state: { email: sentEmail } })}
+      onOTPSent={(sentEmail) =>
+        navigate("/verify-otp", { state: { email: sentEmail } })
+      }
       onBack={() => navigate("/login")}
     />
   );
@@ -112,7 +123,9 @@ function VerifyOTPWrapper() {
     <VerifyOTPPage
       email={email}
       onVerified={(verifiedEmail, verifiedOtp) =>
-        navigate("/reset-password", { state: { email: verifiedEmail, otp: verifiedOtp } })
+        navigate("/reset-password", {
+          state: { email: verifiedEmail, otp: verifiedOtp },
+        })
       }
       onBack={() => navigate("/forgot-password")}
     />
@@ -139,21 +152,22 @@ function ResetPasswordWrapper() {
   );
 }
 
-// function DashboardWrapper() {
-//   const navigate = useNavigate();
-//   const user = getActiveUser();
+function DashboardWrapper() {
+  const navigate = useNavigate();
+  const user = getActiveUser();
 
-//   return (
-//     <DashboardPage
-//       user={user!}
-//       onLogout={() => {
-//         setActiveSession(null);
-//         navigate("/login");
-//       }}
-//     />
-//   );
-// }
+  return (
+    <DashboardPage
+      user={user!}
+      onLogout={() => {
+        setActiveSession(null);
+        navigate("/login");
+      }}
+    />
+  );
+}
 
+/*
 function DashboardWrapper() {
   const navigate = useNavigate();
 
@@ -161,10 +175,10 @@ function DashboardWrapper() {
 
   const user = firebaseUser
     ? {
-        name: firebaseUser.displayName || "User",
-        email: firebaseUser.email || "",
-        profilePicture: firebaseUser.photoURL || ""
-      }
+      name: firebaseUser.displayName || "User",
+      email: firebaseUser.email || "",
+      profilePicture: firebaseUser.photoURL || "",
+    }
     : null;
 
   if (!user) {
@@ -182,19 +196,20 @@ function DashboardWrapper() {
     />
   );
 }
+*/
 export function AppRoutes() {
-
-
-
   const navigate = useNavigate();
 
   // Listen for 401 Unauthorized events from api.client.ts
   useEffect(() => {
     const handleUnauthorized = () => {
-      const fullPath = window.location.pathname + window.location.search + window.location.hash;
+      const fullPath =
+        window.location.pathname +
+        window.location.search +
+        window.location.hash;
       navigate("/login", {
         state: { from: { pathname: fullPath } },
-        replace: true
+        replace: true,
       });
     };
     window.addEventListener("unauthorized", handleUnauthorized);
@@ -205,7 +220,7 @@ export function AppRoutes() {
   useEffect(() => {
     const handleFocus = () => {
       if (getActiveUser()) {
-        getDashboardDataApi().catch(() => {});
+        getDashboardDataApi().catch(() => { });
       }
     };
     window.addEventListener("focus", handleFocus);

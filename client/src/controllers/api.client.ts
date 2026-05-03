@@ -7,6 +7,8 @@ export interface User {
   name?: string;
   email?: string;
   role?: string;
+  profilePicture?: string;
+  phone?: string;
 }
 
 export function setActiveSession(user: User | null, token?: string) {
