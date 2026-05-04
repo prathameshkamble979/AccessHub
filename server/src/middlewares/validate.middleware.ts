@@ -29,6 +29,10 @@ export const loginValidator = [
   body('password').notEmpty().withMessage('Password is required'),
 ];
 
+export const googleLoginValidator = [
+  body('idToken').trim().notEmpty().withMessage('Google token is required'),
+];
+
 // ── OTP Validators ────────────────────────────────────────────────────────────
 export const forgotPasswordValidator = [
   body('identifier').trim().notEmpty().withMessage('Email or phone is required'),

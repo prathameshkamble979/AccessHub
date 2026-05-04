@@ -1,11 +1,12 @@
 import { initializeApp } from 'firebase/app';
-import { getAnalytics } from 'firebase/analytics';
+import { getAnalytics, isSupported } from 'firebase/analytics';
 import {
   getAuth,
   GoogleAuthProvider,
   signInWithPopup,
   setPersistence,
   browserLocalPersistence,
+  type Auth,
 } from 'firebase/auth';
 
 const firebaseConfig = {
@@ -18,18 +19,45 @@ const firebaseConfig = {
   measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID,
 };
 
+const missingConfig: string[] = [];
+if (!firebaseConfig.apiKey) missingConfig.push('VITE_FIREBASE_API_KEY');
+if (!firebaseConfig.authDomain) missingConfig.push('VITE_FIREBASE_AUTH_DOMAIN');
+if (!firebaseConfig.projectId) missingConfig.push('VITE_FIREBASE_PROJECT_ID');
+if (!firebaseConfig.appId) missingConfig.push('VITE_FIREBASE_APP_ID');
+
 const app = initializeApp(firebaseConfig);
 
-const analytics = getAnalytics(app);
+if (missingConfig.length === 0 && firebaseConfig.measurementId) {
+  isSupported()
+    .then((supported) => {
+      if (supported) {
+        getAnalytics(app);
+      }
+    })
+    .catch(() => {
+      // Ignore analytics initialization errors; auth should still work.
+    });
+}
 
-export const auth = getAuth(app);
+let authInstance: Auth | null = null;
+const googleProvider = new GoogleAuthProvider();
 
-setPersistence(auth, browserLocalPersistence);
-
-export const googleProvider = new GoogleAuthProvider();
+function getAuthInstance(): Auth {
+  if (authInstance) return authInstance;
+  authInstance = getAuth(app);
+  setPersistence(authInstance, browserLocalPersistence);
+  return authInstance;
+}
 
 export const loginWithGoogle = async () => {
+  if (missingConfig.length > 0) {
+    throw new Error(
+      `Firebase config missing: ${missingConfig.join(', ')}`
+    );
+  }
+
   try {
+    const auth = getAuthInstance();
     const result = await signInWithPopup(auth, googleProvider);
 
     const user = result.user;

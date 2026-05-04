@@ -6,6 +6,8 @@ export interface IUser extends Document {
   phone?: string;
   password?: string;
   profilePicture?: string;
+  firebaseUid?: string;
+  authProvider?: 'local' | 'google';
   role: string;
   createdAt: Date;
   updatedAt: Date;
@@ -37,6 +39,17 @@ const UserSchema: Schema = new Schema(
     },
     profilePicture: {
       type: String,
+    },
+    firebaseUid: {
+      type: String,
+      unique: true,
+      sparse: true,
+      trim: true,
+    },
+    authProvider: {
+      type: String,
+      enum: ['local', 'google'],
+      default: 'local',
     },
     role: {
       type: String,

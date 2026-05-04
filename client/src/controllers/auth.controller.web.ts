@@ -1,38 +1,23 @@
-// import { auth } from "../config/firebase";
-// import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
+import { loginWithGoogle as firebaseGoogleLogin } from "../config/firebase";
 import { setActiveSession, fetchApi } from "./api.client";
 
 
 export const loginWithGoogle = async () => {
-  alert("Google login is temporarily disabled.");
-  throw new Error("Google login is disabled");
-  /*
   try {
-    const provider = new GoogleAuthProvider();
-    const result = await signInWithPopup(auth, provider);
+    const { token: firebaseIdToken } = await firebaseGoogleLogin();
+    const response = await fetchApi('/auth/google', {
+      method: 'POST',
+      body: JSON.stringify({ idToken: firebaseIdToken }),
+    });
 
-    const user = result.user;
-    const token = await user.getIdToken();
+    setActiveSession(response.user, response.token);
+    localStorage.setItem("login_time", String(Date.now()));
 
-    console.log("USER:", user);
-    console.log("Firebase ID Token:", token);
-
-    // 🔥 MAIN FIX
-    setActiveSession(
-      {
-        uid: user.uid,
-        email: user.email || "",
-        role: "user",
-      },
-      token
-    );
-
-    return user;
+    return response.user;
   } catch (error) {
     console.error("Google Login Error:", error);
     throw error;
   }
-  */
 };
 export interface LoginFormData {
   identifier: string;

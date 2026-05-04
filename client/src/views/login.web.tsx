@@ -222,7 +222,7 @@ export function LoginPage({
             >
               {loading ? 'Signing in...' : 'Sign in'}
             </button>
-            <button className='btn-primary' onClick={handleGoogleLogin}>Sign in with Google</button>
+            <button className='btn-primary' type='button' onClick={handleGoogleLogin}>Sign in with Google</button>
           </form>
 
           <p className='form-footer'>
